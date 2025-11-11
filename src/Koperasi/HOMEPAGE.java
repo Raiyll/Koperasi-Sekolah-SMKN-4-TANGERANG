@@ -51,7 +51,7 @@ public class HOMEPAGE extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 28)); // NOI18N
         jLabel1.setText("KOPERASI SMKN 4 TANGERANG");
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/logosmk4 (1).png"))); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/assets/logosmk4 (1).png"))); // NOI18N
         jLabel8.setText("jLabel8");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -127,13 +127,13 @@ public class HOMEPAGE extends javax.swing.JFrame {
                 .addGap(16, 16, 16))
         );
 
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/anggotaicon (1).png"))); // NOI18N
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/assets/barang (1).png"))); // NOI18N
         jLabel7.setText("jLabel7");
 
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/transaksibaru (1).png"))); // NOI18N
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/assets/transaksi (1).jpg"))); // NOI18N
         jLabel10.setText("jLabel10");
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/barang (1).png"))); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Koperasi/assets/anggotaicon (1).png"))); // NOI18N
         jLabel9.setText("jLabel9");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
