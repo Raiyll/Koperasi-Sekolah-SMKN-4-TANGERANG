@@ -18,20 +18,13 @@ public class HOMEPAGE extends javax.swing.JFrame {
      * Creates new form HOMEPAGE
      */
     public HOMEPAGE() {
-        initComponents();
-        // Buat panel background
-        BackgroundPanel bg = new BackgroundPanel("src/Koperasi/Koperasi.assets/FotoSMK4.jpg");
-        setContentPane(bg); // jadikan panel background sebagai content pane
-
+    // pasang background dari resource di classpath
+    BackgroundPanel bg = new BackgroundPanel("/Koperasi/assets/FotoSMK4.jpg");
+    setContentPane(bg);
         // Panggil lagi initComponents supaya isi form ditaruh di atas background
         initComponents();
 
         // Tambahan opsional biar background resize otomatis
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                bg.setSize(getWidth(), getHeight());
-            }
-        });
     }
 
     /**
