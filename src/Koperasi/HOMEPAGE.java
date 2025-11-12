@@ -73,7 +73,7 @@ public class HOMEPAGE extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(245, 241, 220));
 
         jLabel4.setBackground(new java.awt.Color(255, 144, 19));
-        jLabel4.setFont(new java.awt.Font("Microsoft YaHei", 0, 24)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 144, 19));
         jLabel4.setText("LOGIN");
 
