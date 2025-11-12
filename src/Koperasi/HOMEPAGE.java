@@ -4,6 +4,10 @@
  */
 package Koperasi;
 
+import Koperasi.assetkode.RoundedTextField;
+import Koperasi.assetkode.RoundedButton;
+import Koperasi.assetkode.BackgroundPanel;
+
 /**
  *
  * @author ahmad
@@ -16,7 +20,7 @@ public class HOMEPAGE extends javax.swing.JFrame {
     public HOMEPAGE() {
         initComponents();
         // Buat panel background
-        BackgroundPanel bg = new BackgroundPanel("src/Koperasi/FotoSMK4.jpg");
+        BackgroundPanel bg = new BackgroundPanel("src/Koperasi/Koperasi.assets/FotoSMK4.jpg");
         setContentPane(bg); // jadikan panel background sebagai content pane
 
         // Panggil lagi initComponents supaya isi form ditaruh di atas background

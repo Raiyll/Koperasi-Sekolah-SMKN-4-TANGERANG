@@ -1,4 +1,4 @@
-package Koperasi;
+package Koperasi.assetkode;
 
 import java.awt.*;
 import javax.swing.*;
