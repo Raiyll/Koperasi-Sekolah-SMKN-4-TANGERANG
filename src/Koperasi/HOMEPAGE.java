@@ -265,6 +265,16 @@ public class HOMEPAGE extends javax.swing.JFrame {
                 .addGap(37, 37, 37))
         );
 
+        jLabel7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                ForgotPasswordPage fp = new ForgotPasswordPage();
+                fp.setVisible(true);
+            }
+        });
+
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -296,10 +306,21 @@ public class HOMEPAGE extends javax.swing.JFrame {
 
         try (java.sql.ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
+
+                String status = rs.getString("status_anggota");
+                if ("Tidak Aktif".equalsIgnoreCase(status)) {
+                    javax.swing.JOptionPane.showMessageDialog(
+                            this,
+                            "Akses ditolak, user dalam kondisi tidak aktif.\nSilahkan hubungi operator.",
+                            "Akses Ditolak",
+                            javax.swing.JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
+
                 String nama = rs.getString("nama_anggota");
                 javax.swing.JOptionPane.showMessageDialog(this, "Login Berhasil! Selamat datang " + nama);
 
-                // buka form utama (ganti MENUUTAMA kalau classnya lain)
                 MENUPAGE menu = new MENUPAGE();
                 menu.setVisible(true);
                 this.dispose();
