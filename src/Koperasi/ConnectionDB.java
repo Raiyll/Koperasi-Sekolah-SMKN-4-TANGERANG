@@ -8,6 +8,8 @@ public class ConnectionDB {
 
     public static Connection getConnection() {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
             String url = "jdbc:mysql://localhost:3306/koperasi_sekolah";
             String user = "root";
             String pass = "";
@@ -17,6 +19,8 @@ public class ConnectionDB {
         } catch (SQLException e) {
             System.out.println("Koneksi Gagal: " + e.getMessage());
             return null;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
