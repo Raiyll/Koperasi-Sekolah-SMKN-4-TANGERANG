@@ -4,6 +4,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,13 +16,15 @@ public class PEMBELIANPAGE extends JFrame {
     private JTextField txtKodeTransaksi, txtKodeAnggota, txtNamaLengkap, txtKelas, txtNoTelp;
     private JComboBox<String> comboStatusAnggota;
 
-    private JTextField txtNamaBarang, txtHargaSatuan, txtStok, txtJumlah, txtTotalHarga;
-    private JComboBox<String> comboKategori;
+    // UBAHAN: Nama barang jadi combo, kategori jadi field read-only
+    private JComboBox<BarangItem> comboNamaBarang;
+    private JTextField txtKategoriBarang;
+    private JTextField txtHargaSatuan, txtStok, txtJumlah, txtTotalHarga;
 
     private DefaultTableModel modelKeranjang, modelRiwayat;
     private JTable tableKeranjang, tableRiwayat;
 
-    private JButton btnMinus, btnPlus;
+    private JButton btnMinus, btnPlus, btnKeranjang;
 
     public PEMBELIANPAGE() {
         setTitle("Koperasi Sekolah");
@@ -29,10 +35,8 @@ public class PEMBELIANPAGE extends JFrame {
         getContentPane().setBackground(new Color(0, 116, 217));
 
         // ==========================
-        // LOGO DAN TITLE (SIDE BY SIDE)
+        // LOGO DAN TITLE
         // ==========================
-        // ==========================
-
         ImageIcon iconLogo = new ImageIcon("src/Koperasi/assets/logosmk4 (1).png");
         Image scaledLogo = iconLogo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 
@@ -40,8 +44,6 @@ public class PEMBELIANPAGE extends JFrame {
         logo.setBounds(520, 30, 100, 100);
         add(logo);
 
-
-        // Panel untuk title di sebelah kanan logo
         JPanel titlePanel = new JPanel(null);
         titlePanel.setBounds(630, 30, 300, 100);
         titlePanel.setBackground(new Color(0, 116, 217));
@@ -79,7 +81,6 @@ public class PEMBELIANPAGE extends JFrame {
         lblA.setBounds(15, 5, 300, 30);
         headerA.add(lblA);
 
-        // Fields Data Anggota
         String[] labelA = {
                 "Kode Transaksi",
                 "Kode Anggota",
@@ -115,10 +116,10 @@ public class PEMBELIANPAGE extends JFrame {
         }
 
         // =====================================================
-// CARD : PILIH BARANG (VERSI RAPi)
-// =====================================================
+        // CARD : PILIH BARANG
+        // =====================================================
         JPanel cardBarang = new JPanel(null);
-        cardBarang.setBounds(755, 160, 425, 270); // tinggi normal
+        cardBarang.setBounds(755, 160, 425, 270);
         cardBarang.setBackground(Color.WHITE);
         cardBarang.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(cardBarang);
@@ -134,7 +135,6 @@ public class PEMBELIANPAGE extends JFrame {
         lblB.setBounds(15, 5, 300, 30);
         headerB.add(lblB);
 
-// Fields Pilih Barang
         String[] labelB = {
                 "Nama Barang",
                 "Harga Satuan",
@@ -146,12 +146,16 @@ public class PEMBELIANPAGE extends JFrame {
 
         y = 60;
 
-        txtNamaBarang = new JTextField();
+        comboNamaBarang = new JComboBox<>();
+        comboNamaBarang.setMaximumRowCount(10);
+
         txtHargaSatuan = new JTextField();
-        comboKategori = new JComboBox<>(new String[]{
-                "Makanan", "Minuman", "ATK", "Seragam"
-        });
+        txtHargaSatuan.setEditable(false); // read only
+        txtKategoriBarang = new JTextField();
+        txtKategoriBarang.setEditable(false); // read only
         txtStok = new JTextField();
+        txtStok.setEditable(false); // read only
+
         txtJumlah = new JTextField("1");
         txtJumlah.setHorizontalAlignment(SwingConstants.CENTER);
         txtTotalHarga = new JTextField();
@@ -162,12 +166,13 @@ public class PEMBELIANPAGE extends JFrame {
             l.setBounds(20, y, 150, 25);
             cardBarang.add(l);
 
-            if (i == 2) {
-                comboKategori.setBounds(180, y, 200, 25);
-                cardBarang.add(comboKategori);
-
+            if (i == 0) {
+                comboNamaBarang.setBounds(180, y, 200, 25);
+                cardBarang.add(comboNamaBarang);
+            } else if (i == 2) {
+                txtKategoriBarang.setBounds(180, y, 200, 25);
+                cardBarang.add(txtKategoriBarang);
             } else if (i == 4) {
-                // Jumlah dengan tombol +/-
                 btnMinus = new JButton("-");
                 btnMinus.setBounds(180, y, 45, 25);
                 btnMinus.setBackground(Color.RED);
@@ -186,7 +191,6 @@ public class PEMBELIANPAGE extends JFrame {
                 cardBarang.add(txtJumlah);
                 cardBarang.add(btnPlus);
 
-                // Event listeners untuk +/-
                 btnMinus.addActionListener(e -> {
                     try {
                         int val = Integer.parseInt(txtJumlah.getText());
@@ -211,8 +215,7 @@ public class PEMBELIANPAGE extends JFrame {
 
             } else {
                 JTextField field = null;
-                switch(i) {
-                    case 0: field = txtNamaBarang; break;
+                switch (i) {
                     case 1: field = txtHargaSatuan; break;
                     case 3: field = txtStok; break;
                     case 5: field = txtTotalHarga; break;
@@ -220,25 +223,54 @@ public class PEMBELIANPAGE extends JFrame {
                 field.setBounds(180, y, 200, 25);
                 cardBarang.add(field);
             }
-            y += 28; // dikurangi dari 32 agar muat di card
+            y += 28;
         }
 
-// Auto calculate total harga
-        txtHargaSatuan.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
-                hitungTotalHarga();
-            }
-        });
-
-// Tombol Tambah ke Keranjang
-        JButton btnKeranjang = new JButton("Tambah ke Keranjang");
-        btnKeranjang.setBounds(125, 225, 175, 30); // posisi pas di dalam card
+        // Tombol Tambah ke Keranjang (jadi field class supaya bisa enable/disable)
+        btnKeranjang = new JButton("Tambah ke Keranjang");
+        btnKeranjang.setBounds(125, 225, 175, 30);
         btnKeranjang.setBackground(new Color(0, 102, 204));
         btnKeranjang.setForeground(Color.WHITE);
         btnKeranjang.setFocusPainted(false);
         btnKeranjang.addActionListener(e -> tambahKeKeranjang());
         cardBarang.add(btnKeranjang);
 
+        // Auto calculate total harga kalau jumlah diubah manual
+        txtJumlah.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                hitungTotalHarga();
+            }
+        });
+
+        // Ketika pilih barang, isi field lain
+        comboNamaBarang.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                BarangItem item = (BarangItem) comboNamaBarang.getSelectedItem();
+                if (item != null) {
+                    txtHargaSatuan.setText(String.valueOf(item.getHargaJual()));
+                    txtKategoriBarang.setText(item.getKategori());
+                    txtStok.setText(String.valueOf(item.getStok()));
+
+                    // reset jumlah
+                    txtJumlah.setText("1");
+                    hitungTotalHarga();
+
+                    // Cek stok
+                    if (item.getStok() <= 0) {
+                        btnKeranjang.setEnabled(false);
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Stok barang \"" + item.getNamaBarang() + "\" habis.\nBarang tidak tersedia.",
+                                "Stok Habis",
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                    } else {
+                        btnKeranjang.setEnabled(true);
+                    }
+                }
+            }
+        });
 
         // =====================================================
         // CARD : KERANJANG BELANJA
@@ -260,7 +292,6 @@ public class PEMBELIANPAGE extends JFrame {
         lblC.setBounds(15, 5, 300, 30);
         headerC.add(lblC);
 
-        // Tabel Keranjang
         modelKeranjang = new DefaultTableModel(
                 new Object[]{"Barang", "Jumlah", "Harga", "Total"}, 0
         );
@@ -272,7 +303,6 @@ public class PEMBELIANPAGE extends JFrame {
         scrollCart.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardCart.add(scrollCart);
 
-        // Tombol-tombol
         JButton btnReset = new JButton("Reset Form");
         btnReset.setBounds(90, 165, 120, 30);
         btnReset.setBackground(new Color(220, 100, 20));
@@ -317,7 +347,6 @@ public class PEMBELIANPAGE extends JFrame {
         lblD.setBounds(20, 5, 300, 30);
         headerD.add(lblD);
 
-        // Tabel Riwayat
         modelRiwayat = new DefaultTableModel(
                 new Object[]{"Kode", "Anggota", "Total", "Tanggal"}, 0
         );
@@ -328,6 +357,9 @@ public class PEMBELIANPAGE extends JFrame {
         scrollHistory.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollHistory.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardHistory.add(scrollHistory);
+
+        // ====== LOAD DATA BARANG DARI DATABASE ======
+        loadBarangFromDatabase();
 
         setVisible(true);
     }
@@ -344,29 +376,58 @@ public class PEMBELIANPAGE extends JFrame {
     }
 
     private void tambahKeKeranjang() {
-        if (txtNamaBarang.getText().isEmpty() || txtHargaSatuan.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Lengkapi data barang!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        BarangItem item = (BarangItem) comboNamaBarang.getSelectedItem();
+        if (item == null) {
+            JOptionPane.showMessageDialog(this, "Pilih barang terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (txtHargaSatuan.getText().isEmpty() || txtStok.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Data barang belum lengkap!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            String namaBarang = txtNamaBarang.getText();
+            int stok = Integer.parseInt(txtStok.getText());
             int jumlah = Integer.parseInt(txtJumlah.getText());
+
+            if (stok <= 0) {
+                JOptionPane.showMessageDialog(this, "Stok barang habis. Tidak bisa menambah ke keranjang.", "Stok Habis", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (jumlah > stok) {
+                JOptionPane.showMessageDialog(this,
+                        "Jumlah yang dibeli melebihi stok!\nStok tersedia: " + stok,
+                        "Stok Tidak Cukup",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             int harga = Integer.parseInt(txtHargaSatuan.getText());
-            int total = Integer.parseInt(txtTotalHarga.getText());
+            int total = harga * jumlah;
 
-            modelKeranjang.addRow(new Object[]{namaBarang, jumlah, harga, total});
+            modelKeranjang.addRow(new Object[]{item.getNamaBarang(), jumlah, harga, total});
 
-            // Reset field barang
-            txtNamaBarang.setText("");
-            txtHargaSatuan.setText("");
-            txtStok.setText("");
+            // update stok lokal (di form) setelah beli
+            int sisaStok = stok - jumlah;
+            txtStok.setText(String.valueOf(sisaStok));
+            item.setStok(sisaStok); // update di objek combo juga
+
+            if (sisaStok <= 0) {
+                btnKeranjang.setEnabled(false);
+                JOptionPane.showMessageDialog(this,
+                        "Stok barang \"" + item.getNamaBarang() + "\" sekarang habis.",
+                        "Stok Habis",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // reset jumlah & total harga saja (nama barang tetap)
             txtJumlah.setText("1");
-            txtTotalHarga.setText("");
-            comboKategori.setSelectedIndex(0);
+            hitungTotalHarga();
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Harga dan jumlah harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Jumlah dan harga harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -391,17 +452,14 @@ public class PEMBELIANPAGE extends JFrame {
             return;
         }
 
-        // Hitung total belanja
         int totalBelanja = 0;
         for (int i = 0; i < modelKeranjang.getRowCount(); i++) {
             totalBelanja += (int) modelKeranjang.getValueAt(i, 3);
         }
 
-        // Format tanggal
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         String tanggal = sdf.format(new Date());
 
-        // Tambah ke riwayat
         modelRiwayat.addRow(new Object[]{
                 txtKodeTransaksi.getText(),
                 txtNamaLengkap.getText(),
@@ -411,12 +469,10 @@ public class PEMBELIANPAGE extends JFrame {
 
         JOptionPane.showMessageDialog(this, "Transaksi berhasil disimpan!\nTotal: Rp " + totalBelanja, "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
-        // Reset form
         resetForm();
     }
 
     private void resetForm() {
-        // Reset Data Anggota
         txtKodeTransaksi.setText("");
         txtKodeAnggota.setText("");
         txtNamaLengkap.setText("");
@@ -424,21 +480,97 @@ public class PEMBELIANPAGE extends JFrame {
         comboStatusAnggota.setSelectedIndex(0);
         txtNoTelp.setText("");
 
-        // Reset Pilih Barang
-        txtNamaBarang.setText("");
+        comboNamaBarang.setSelectedIndex(-1);
         txtHargaSatuan.setText("");
-        comboKategori.setSelectedIndex(0);
+        txtKategoriBarang.setText("");
         txtStok.setText("");
         txtJumlah.setText("1");
         txtTotalHarga.setText("");
 
-        // Clear Keranjang
         modelKeranjang.setRowCount(0);
+
+        btnKeranjang.setEnabled(true);
 
         JOptionPane.showMessageDialog(this, "Form berhasil direset!", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // ===================== DB: LOAD DATA BARANG =====================
+    private void loadBarangFromDatabase() {
+        comboNamaBarang.removeAllItems();
+        String sql = "SELECT kode_barang, nama_barang, kategori, harga_jual, stok FROM barang ORDER BY nama_barang";
+
+        try (Connection conn = ConnectionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                BarangItem item = new BarangItem(
+                        rs.getString("kode_barang"),
+                        rs.getString("nama_barang"),
+                        rs.getString("kategori"),
+                        rs.getInt("harga_jual"),
+                        rs.getInt("stok")
+                );
+                comboNamaBarang.addItem(item);
+            }
+
+            comboNamaBarang.setSelectedIndex(-1); // belum ada yang dipilih di awal
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Gagal mengambil data barang dari database:\n" + e.getMessage(),
+                    "Error Database",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Kelas helper untuk representasi barang di combo
+    private static class BarangItem {
+        private String kodeBarang;
+        private String namaBarang;
+        private String kategori;
+        private int hargaJual;
+        private int stok;
+
+        public BarangItem(String kodeBarang, String namaBarang, String kategori, int hargaJual, int stok) {
+            this.kodeBarang = kodeBarang;
+            this.namaBarang = namaBarang;
+            this.kategori = kategori;
+            this.hargaJual = hargaJual;
+            this.stok = stok;
+        }
+
+        public String getKodeBarang() {
+            return kodeBarang;
+        }
+
+        public String getNamaBarang() {
+            return namaBarang;
+        }
+
+        public String getKategori() {
+            return kategori;
+        }
+
+        public int getHargaJual() {
+            return hargaJual;
+        }
+
+        public int getStok() {
+            return stok;
+        }
+
+        public void setStok(int stok) {
+            this.stok = stok;
+        }
+
+        @Override
+        public String toString() {
+            return namaBarang; // yang tampil di dropdown
+        }
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new PEMBELIANPAGE());
+        SwingUtilities.invokeLater(PEMBELIANPAGE::new);
     }
 }
