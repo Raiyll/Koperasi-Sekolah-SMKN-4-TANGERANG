@@ -277,7 +277,42 @@ public class HOMEPAGE extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:                           
+       String username = jTextField1.getText().trim(); // input username
+    String password = jTextField3.getText().trim(); // input password (kamu pakai JTextField)
+
+    if (username.isEmpty() || password.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Isi username dan password!");
+        return;
+    }
+
+    String sql = "SELECT * FROM anggota WHERE username = ? AND password = ?";
+
+    try (java.sql.Connection conn = ConnectionDB.getConnection();
+         java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, username);
+        ps.setString(2, password);
+
+        try (java.sql.ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                String nama = rs.getString("nama_anggota");
+                javax.swing.JOptionPane.showMessageDialog(this, "Login Berhasil! Selamat datang " + nama);
+
+                // buka form utama (ganti MENUUTAMA kalau classnya lain)
+                MENUPAGE menu = new MENUPAGE();
+                menu.setVisible(true);
+                this.dispose();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Username atau password salah!");
+            }
+        }
+    } catch (Exception e) {
+        // tampilkan pesan error agar tahu apa yang salah
+        javax.swing.JOptionPane.showMessageDialog(this, "Error koneksi: " + e.getMessage());
+        e.printStackTrace();
+    }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
