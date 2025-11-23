@@ -28,7 +28,7 @@ public class PEMBELIANPAGE extends JFrame {
 
     public PEMBELIANPAGE() {
         setTitle("Koperasi Sekolah");
-        setSize(1200, 950);
+        setSize(1400, 900);
         setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,40 +38,54 @@ public class PEMBELIANPAGE extends JFrame {
         // LOGO DAN TITLE
         // ==========================
         ImageIcon iconLogo = new ImageIcon("src/Koperasi/assets/logosmk4 (1).png");
-        Image scaledLogo = iconLogo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        Image scaledLogo = iconLogo.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
 
         JLabel logo = new JLabel(new ImageIcon(scaledLogo));
-        logo.setBounds(520, 30, 100, 100);
+        logo.setBounds(50, 20, 80, 80);
         add(logo);
 
         JPanel titlePanel = new JPanel(null);
-        titlePanel.setBounds(630, 30, 300, 100);
+        titlePanel.setBounds(140, 20, 300, 80);
         titlePanel.setBackground(new Color(0, 116, 217));
         add(titlePanel);
 
         JLabel title1 = new JLabel("KOPERASI SEKOLAH");
-        title1.setFont(new Font("SansSerif", Font.BOLD, 24));
+        title1.setFont(new Font("SansSerif", Font.BOLD, 22));
         title1.setForeground(Color.WHITE);
-        title1.setBounds(0, 20, 300, 30);
+        title1.setBounds(0, 15, 300, 25);
         titlePanel.add(title1);
 
         JLabel title2 = new JLabel("SMKN 4 TANGERANG");
-        title2.setFont(new Font("SansSerif", Font.BOLD, 22));
+        title2.setFont(new Font("SansSerif", Font.BOLD, 20));
         title2.setForeground(Color.WHITE);
-        title2.setBounds(0, 55, 300, 30);
+        title2.setBounds(0, 45, 300, 25);
         titlePanel.add(title2);
 
+        // Tombol Back ke Menu
+        JButton btnBack = new JButton("← Kembali");
+        btnBack.setBounds(1240, 30, 120, 40);
+        btnBack.setBackground(new Color(220, 53, 69));
+        btnBack.setForeground(Color.WHITE);
+        btnBack.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnBack.setFocusPainted(false);
+        btnBack.addActionListener(e -> {
+            MENUPAGE menuPage = new MENUPAGE();
+            menuPage.setVisible(true);
+            dispose();
+        });
+        add(btnBack);
+
         // =====================================================
-        // CARD : DATA ANGGOTA
+        // CARD : DATA ANGGOTA (Kiri Atas)
         // =====================================================
         JPanel cardAnggota = new JPanel(null);
-        cardAnggota.setBounds(280, 160, 425, 270);
+        cardAnggota.setBounds(30, 120, 450, 270);
         cardAnggota.setBackground(Color.WHITE);
         cardAnggota.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(cardAnggota);
 
         JPanel headerA = new JPanel(null);
-        headerA.setBounds(0, 0, 425, 40);
+        headerA.setBounds(0, 0, 450, 40);
         headerA.setBackground(new Color(220, 100, 20));
         cardAnggota.add(headerA);
 
@@ -99,14 +113,12 @@ public class PEMBELIANPAGE extends JFrame {
         comboStatusAnggota = new JComboBox<>(new String[]{"Aktif", "Tidak Aktif"});
         txtNoTelp = new JTextField();
 
-        // readonly semua kecuali Kode Anggota
         txtKodeTransaksi.setEditable(false);
         txtNamaLengkap.setEditable(false);
         txtKelas.setEditable(false);
         txtNoTelp.setEditable(false);
         comboStatusAnggota.setEnabled(false);
 
-        // auto generate kode transaksi
         txtKodeTransaksi.setText(generateKodeTransaksi());
 
         JComponent[] componentsA = {
@@ -120,19 +132,18 @@ public class PEMBELIANPAGE extends JFrame {
             cardAnggota.add(l);
 
             if (i == 1) {
-                // Kode Anggota + tombol Sync
-                componentsA[i].setBounds(180, y, 120, 25);
+                componentsA[i].setBounds(180, y, 140, 25);
                 cardAnggota.add(componentsA[i]);
 
                 btnSyncAnggota = new JButton("Cari");
-                btnSyncAnggota.setBounds(310, y, 70, 25);
+                btnSyncAnggota.setBounds(330, y, 80, 25);
                 btnSyncAnggota.setFocusPainted(false);
                 btnSyncAnggota.setBackground(new Color(0, 102, 204));
                 btnSyncAnggota.setForeground(Color.WHITE);
                 btnSyncAnggota.addActionListener(e -> syncAnggota());
                 cardAnggota.add(btnSyncAnggota);
             } else {
-                componentsA[i].setBounds(180, y, 200, 25);
+                componentsA[i].setBounds(180, y, 230, 25);
                 cardAnggota.add(componentsA[i]);
             }
 
@@ -140,16 +151,16 @@ public class PEMBELIANPAGE extends JFrame {
         }
 
         // =====================================================
-        // CARD : PILIH BARANG
+        // CARD : PILIH BARANG (Kanan Atas)
         // =====================================================
         JPanel cardBarang = new JPanel(null);
-        cardBarang.setBounds(755, 160, 425, 270);
+        cardBarang.setBounds(500, 120, 450, 270);
         cardBarang.setBackground(Color.WHITE);
         cardBarang.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(cardBarang);
 
         JPanel headerB = new JPanel(null);
-        headerB.setBounds(0, 0, 425, 40);
+        headerB.setBounds(0, 0, 450, 40);
         headerB.setBackground(new Color(220, 100, 20));
         cardBarang.add(headerB);
 
@@ -194,7 +205,7 @@ public class PEMBELIANPAGE extends JFrame {
             cardBarang.add(l);
 
             if (i == 0) {
-                comboNamaBarang.setBounds(180, y, 200, 25);
+                comboNamaBarang.setBounds(180, y, 230, 25);
                 cardBarang.add(comboNamaBarang);
             } else if (i == 4) {
                 btnMinus = new JButton("-");
@@ -245,22 +256,20 @@ public class PEMBELIANPAGE extends JFrame {
                     case 3: field = txtStok; break;
                     case 5: field = txtTotalHarga; break;
                 }
-                field.setBounds(180, y, 200, 25);
+                field.setBounds(180, y, 230, 25);
                 cardBarang.add(field);
             }
             y += 28;
         }
 
-        // Tombol Tambah ke Keranjang
         btnKeranjang = new JButton("Tambah ke Keranjang");
-        btnKeranjang.setBounds(125, 225, 175, 30);
+        btnKeranjang.setBounds(137, 225, 175, 30);
         btnKeranjang.setBackground(new Color(0, 102, 204));
         btnKeranjang.setForeground(Color.WHITE);
         btnKeranjang.setFocusPainted(false);
         btnKeranjang.addActionListener(e -> tambahKeKeranjang());
         cardBarang.add(btnKeranjang);
 
-        // Auto hitung total ketika jumlah diketik
         txtJumlah.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -268,7 +277,6 @@ public class PEMBELIANPAGE extends JFrame {
             }
         });
 
-        // Ketika pilih barang, isi/clear field lainnya
         comboNamaBarang.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 BarangItem item = (BarangItem) comboNamaBarang.getSelectedItem();
@@ -293,7 +301,6 @@ public class PEMBELIANPAGE extends JFrame {
                     }
                 }
             } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                // kalau tidak ada yang terseleksi, kosongkan field
                 if (comboNamaBarang.getSelectedIndex() == -1) {
                     clearBarangFields();
                 }
@@ -301,16 +308,16 @@ public class PEMBELIANPAGE extends JFrame {
         });
 
         // =====================================================
-        // CARD : KERANJANG BELANJA
+        // CARD : KERANJANG BELANJA (Tengah)
         // =====================================================
         JPanel cardCart = new JPanel(null);
-        cardCart.setBounds(450, 460, 570, 210);
+        cardCart.setBounds(970, 120, 400, 270);
         cardCart.setBackground(Color.WHITE);
         cardCart.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(cardCart);
 
         JPanel headerC = new JPanel(null);
-        headerC.setBounds(0, 0, 570, 40);
+        headerC.setBounds(0, 0, 400, 40);
         headerC.setBackground(new Color(220, 100, 20));
         cardCart.add(headerC);
 
@@ -326,13 +333,13 @@ public class PEMBELIANPAGE extends JFrame {
         tableKeranjang = new JTable(modelKeranjang);
         tableKeranjang.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         JScrollPane scrollCart = new JScrollPane(tableKeranjang);
-        scrollCart.setBounds(20, 60, 530, 95);
+        scrollCart.setBounds(15, 60, 370, 130);
         scrollCart.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollCart.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardCart.add(scrollCart);
 
         JButton btnReset = new JButton("Reset Form");
-        btnReset.setBounds(90, 165, 120, 30);
+        btnReset.setBounds(15, 205, 110, 30);
         btnReset.setBackground(new Color(220, 100, 20));
         btnReset.setForeground(Color.WHITE);
         btnReset.setFocusPainted(false);
@@ -340,55 +347,57 @@ public class PEMBELIANPAGE extends JFrame {
         cardCart.add(btnReset);
 
         JButton btnSimpan = new JButton("Simpan");
-        btnSimpan.setBounds(225, 165, 120, 30);
-        btnSimpan.setBackground(new Color(220, 100, 20));
+        btnSimpan.setBounds(145, 205, 110, 30);
+        btnSimpan.setBackground(new Color(34, 139, 34));
         btnSimpan.setForeground(Color.WHITE);
         btnSimpan.setFocusPainted(false);
         btnSimpan.addActionListener(e -> simpanTransaksi());
         cardCart.add(btnSimpan);
 
         JButton btnHapus = new JButton("Hapus Item");
-        btnHapus.setBounds(360, 165, 120, 30);
-        btnHapus.setBackground(new Color(220, 100, 20));
+        btnHapus.setBounds(275, 205, 110, 30);
+        btnHapus.setBackground(new Color(220, 53, 69));
         btnHapus.setForeground(Color.WHITE);
         btnHapus.setFocusPainted(false);
         btnHapus.addActionListener(e -> hapusItem());
         cardCart.add(btnHapus);
 
         // =====================================================
-        // CARD : RIWAYAT TRANSAKSI
+        // CARD : RIWAYAT TRANSAKSI (Bawah - LEBIH LEBAR)
         // =====================================================
         JPanel cardHistory = new JPanel(null);
-        cardHistory.setBounds(280, 700, 900, 200);
+        cardHistory.setBounds(30, 410, 1340, 430);
         cardHistory.setBackground(Color.WHITE);
         cardHistory.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(cardHistory);
 
         JPanel headerD = new JPanel(null);
-        headerD.setBounds(0, 0, 900, 40);
+        headerD.setBounds(0, 0, 1340, 45);
         headerD.setBackground(new Color(220, 100, 20));
         cardHistory.add(headerD);
 
         JLabel lblD = new JLabel("Riwayat Transaksi");
-        lblD.setFont(new Font("SansSerif", Font.BOLD, 16));
+        lblD.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblD.setForeground(Color.WHITE);
-        lblD.setBounds(20, 5, 300, 30);
+        lblD.setBounds(20, 5, 300, 35);
         headerD.add(lblD);
 
         modelRiwayat = new DefaultTableModel(
-                new Object[]{"Kode", "Anggota", "Total", "Tanggal"}, 0
+                new Object[]{"Kode Transaksi", "Nama Anggota", "Total Belanja", "Tanggal"}, 0
         );
         tableRiwayat = new JTable(modelRiwayat);
         tableRiwayat.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tableRiwayat.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        tableRiwayat.setRowHeight(25);
+
         JScrollPane scrollHistory = new JScrollPane(tableRiwayat);
-        scrollHistory.setBounds(20, 60, 860, 120);
+        scrollHistory.setBounds(20, 65, 1300, 345);
         scrollHistory.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollHistory.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardHistory.add(scrollHistory);
 
         // ====== LOAD DATA BARANG DARI DATABASE ======
         loadBarangFromDatabase();
-        // pastikan field barang kosong di awal
         comboNamaBarang.setSelectedIndex(-1);
         clearBarangFields();
         btnKeranjang.setEnabled(true);
@@ -400,7 +409,7 @@ public class PEMBELIANPAGE extends JFrame {
 
     private String generateKodeTransaksi() {
         Random random = new Random();
-        int number = random.nextInt(90000) + 10000; // 10000 - 99999
+        int number = random.nextInt(90000) + 10000;
         return "TRS-" + number;
     }
 
@@ -454,7 +463,6 @@ public class PEMBELIANPAGE extends JFrame {
 
             int harga = Integer.parseInt(txtHargaSatuan.getText());
 
-            // ========= LOGIKA GABUNG JIKA BARANG SAMA =========
             String namaBarang = item.getNamaBarang();
             int existingRowIndex = -1;
 
@@ -467,7 +475,6 @@ public class PEMBELIANPAGE extends JFrame {
             }
 
             if (existingRowIndex != -1) {
-                // Barang sudah ada di keranjang → gabung quantity
                 int existingQty = (int) modelKeranjang.getValueAt(existingRowIndex, 1);
                 int newQty = existingQty + jumlah;
                 int newTotal = harga * newQty;
@@ -475,12 +482,10 @@ public class PEMBELIANPAGE extends JFrame {
                 modelKeranjang.setValueAt(newQty, existingRowIndex, 1);
                 modelKeranjang.setValueAt(newTotal, existingRowIndex, 3);
             } else {
-                // Barang belum ada → tambah row baru
                 int total = harga * jumlah;
                 modelKeranjang.addRow(new Object[]{namaBarang, jumlah, harga, total});
             }
 
-            // update stok sisa
             int sisaStok = stok - jumlah;
             txtStok.setText(String.valueOf(sisaStok));
             item.setStok(sisaStok);
@@ -493,7 +498,6 @@ public class PEMBELIANPAGE extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
             }
 
-            // reset jumlah dan total (field)
             txtJumlah.setText("1");
             hitungTotalHarga();
 
@@ -528,23 +532,87 @@ public class PEMBELIANPAGE extends JFrame {
             totalBelanja += (int) modelKeranjang.getValueAt(i, 3);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String tanggal = sdf.format(new Date());
 
-        modelRiwayat.addRow(new Object[]{
-                txtKodeTransaksi.getText(),
-                txtNamaLengkap.getText(),
-                totalBelanja,
-                tanggal
-        });
+        // Simpan ke database
+        String sqlTransaksi = "INSERT INTO transaksi (kode_transaksi, tanggal_transaksi, kode_anggota, total_harga, bayar, kembalian, status_transaksi, keterangan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlUpdateStok = "UPDATE barang SET stok = stok - ? WHERE nama_barang = ?";
 
-        JOptionPane.showMessageDialog(this, "Transaksi berhasil disimpan!\nTotal: Rp " + totalBelanja, "Sukses", JOptionPane.INFORMATION_MESSAGE);
+        try (Connection conn = ConnectionDB.getConnection()) {
+            conn.setAutoCommit(false); // mulai transaksi
 
-        resetForm();
+            try {
+                // 1. Insert data transaksi utama
+                try (PreparedStatement psTransaksi = conn.prepareStatement(sqlTransaksi)) {
+                    psTransaksi.setString(1, txtKodeTransaksi.getText());
+                    psTransaksi.setString(2, tanggal);
+                    psTransaksi.setString(3, txtKodeAnggota.getText());
+                    psTransaksi.setDouble(4, totalBelanja);
+                    psTransaksi.setDouble(5, totalBelanja); // bayar = total
+                    psTransaksi.setDouble(6, 0); // kembalian = 0
+                    psTransaksi.setString(7, "Lunas");
+
+                    // Buat keterangan detail barang
+                    StringBuilder keterangan = new StringBuilder("Pembelian: ");
+                    for (int i = 0; i < modelKeranjang.getRowCount(); i++) {
+                        String namaBarang = (String) modelKeranjang.getValueAt(i, 0);
+                        int jumlah = (int) modelKeranjang.getValueAt(i, 1);
+                        keterangan.append(namaBarang).append(" (").append(jumlah).append("x)");
+                        if (i < modelKeranjang.getRowCount() - 1) {
+                            keterangan.append(", ");
+                        }
+                    }
+                    psTransaksi.setString(8, keterangan.toString());
+                    psTransaksi.executeUpdate();
+                }
+
+                // 2. Update stok barang
+                try (PreparedStatement psStok = conn.prepareStatement(sqlUpdateStok)) {
+                    for (int i = 0; i < modelKeranjang.getRowCount(); i++) {
+                        String namaBarang = (String) modelKeranjang.getValueAt(i, 0);
+                        int jumlah = (int) modelKeranjang.getValueAt(i, 1);
+
+                        // Update stok barang
+                        psStok.setInt(1, jumlah);
+                        psStok.setString(2, namaBarang);
+                        psStok.executeUpdate();
+                    }
+                }
+
+                conn.commit(); // commit semua perubahan
+
+                // Tampilkan di riwayat
+                SimpleDateFormat sdfDisplay = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                modelRiwayat.addRow(new Object[]{
+                        txtKodeTransaksi.getText(),
+                        txtNamaLengkap.getText(),
+                        "Rp " + String.format("%,d", totalBelanja),
+                        sdfDisplay.format(new Date())
+                });
+
+                JOptionPane.showMessageDialog(this,
+                        "Transaksi berhasil disimpan!\nTotal: Rp " + String.format("%,d", totalBelanja),
+                        "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                resetForm();
+
+            } catch (SQLException e) {
+                conn.rollback(); // batalkan semua perubahan jika ada error
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Gagal menyimpan transaksi ke database:\n" + e.getMessage(),
+                    "Error Database",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     private void resetForm() {
-        // generate kode transaksi baru
         txtKodeTransaksi.setText(generateKodeTransaksi());
 
         txtKodeAnggota.setText("");
@@ -583,7 +651,6 @@ public class PEMBELIANPAGE extends JFrame {
                 comboNamaBarang.addItem(item);
             }
 
-            // jangan pilih apapun di awal
             comboNamaBarang.setSelectedIndex(-1);
 
         } catch (SQLException e) {
@@ -639,7 +706,6 @@ public class PEMBELIANPAGE extends JFrame {
         }
     }
 
-    // Kelas helper untuk representasi barang di combo
     private static class BarangItem {
         private String kodeBarang;
         private String namaBarang;
